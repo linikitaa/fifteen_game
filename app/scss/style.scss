@@ -1,0 +1,69 @@
+body, html {
+  font: 16px/1.4 Georgia, serif;
+}
+
+.page {
+  max-width: 400px;
+  padding: 2rem;
+  margin: 0 auto;
+  text-align: center;
+  user-select: none;
+}
+
+h1 {
+  font: 2rem/1.2 Georgia, serif;
+  margin-bottom: 1em;
+}
+
+.fifteen {
+  width: 100%;
+  padding-bottom: 100%;
+  background-color: #8c917d;
+  position: relative;
+
+  .item {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 25%;
+    height: 25%;
+    margin: 0;
+    padding: 0;
+    //border: none;
+    background-color: darkslategray;
+    color: #f3cece;
+    font-size: 2rem;
+    cursor: pointer;
+    //box-shadow: inset 1px 1px #000000;
+    //border: 1px solid #000;
+    transition: transform 0.2s;
+
+    .border {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 84%;
+      height: 84%;
+      margin: 8%;
+      box-shadow: inset 0 0 0 2px #e36464;
+      transition: filter 0.5s;
+    }
+  }
+
+}
+.fifteen.fifteenWon .item .border {
+  filter: brightness(300%);
+}
+.button {
+  color: #f9ffe8;
+  background-color: black;
+  font: 1.2rem/1.4 Georgia;
+  border: none;
+  cursor: pointer;
+  padding: 0.5em 1.5em;
+  margin-top: 30px;
+
+  &:hover {
+    background-color: darkslategray;
+  }
+}
