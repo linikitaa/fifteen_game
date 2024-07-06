@@ -1,5 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
     const containerNode = document.getElementById("fifteen");
+    const gameNode = document.getElementById("game");
     const countItems = 16;
 
     // Создаем и добавляем элементы в контейнер
@@ -46,14 +47,45 @@ document.addEventListener("DOMContentLoaded", () => {
     //     });
     // });
 
+    // Shuffle
+
+    //1 вариант ()
+    // document.getElementById('shuffleButton').addEventListener('click', () => {
+    //     const shuffledArray = shuffleArray(matrix.flat())
+    //     matrix = getMatrix(shuffledArray)
+    //     setPositionItems(matrix)
+    // })
+
+    // 2 вариант
+
+    const maxShuffleCount = 50
+    let timer
+    let shuffledClass = 'gameShuffle'
+
     document.getElementById('shuffleButton').addEventListener('click', () => {
-        const shuffledArray = shuffleArray(matrix.flat())
-        matrix = getMatrix(shuffledArray)
-        setPositionItems(matrix)
+        let shuffleCount = 0
+        clearInterval(timer)
+
+        if (shuffleCount === 0) {
+            timer = setInterval(() => {
+                gameNode.classList.add(shuffledClass)
+                randomSwap(matrix)
+                setPositionItems(matrix)
+
+                shuffleCount += 1
+
+                if (shuffleCount >= maxShuffleCount) {
+                    gameNode.classList.remove(shuffledClass)
+
+                    clearInterval(timer)
+                }
+            }, 70)
+        }
     })
 
 
-    // Перемещение элемента по клику
+    // Change Position
+
     const blankNumber = 16
     containerNode.addEventListener('click', (event) => {
         const buttonNode = event.target.closest('button')
@@ -73,8 +105,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Перемещение элемента by arrows
 
-    window.addEventListener('keydown', (event)=>{
-        if (!event.key.includes('Arrow')){
+    window.addEventListener('keydown', (event) => {
+        if (!event.key.includes('Arrow')) {
             return
         }
         const blankCoords = findCoordinatesByNumber(blankNumber, matrix)
@@ -107,9 +139,46 @@ document.addEventListener("DOMContentLoaded", () => {
         swap(blankCoords, buttonCoords, matrix)
         setPositionItems(matrix)
     })
+
+
     /**
+     *
      * Helpers
+     *
      */
+
+    let blockedCoords = null
+    function randomSwap() {
+        const blankCoords = findCoordinatesByNumber(blankNumber, matrix)
+        const validCoords = findValidCoords({
+            blankCoords,
+            matrix,
+            blockedCoords
+        })
+
+        const swapCoords = validCoords[
+            Math.floor(Math.random() * validCoords.length)
+            ]
+
+        swap(blankCoords, swapCoords, matrix)
+        blockedCoords = blankCoords
+    }
+
+    function findValidCoords({blankCoords, matrix}) {
+        const validCoords = []
+
+        for (let y = 0; y < matrix.length; y++) {
+            for (let x = 0; x < matrix[y].length; x++) {
+                if (isValidForSwap({x, y}, blankCoords)) {
+                    if (!blockedCoords || !(blockedCoords.x === x && blockedCoords.y === y)) {
+                        validCoords.push({x, y})
+                    }
+                }
+            }
+        }
+
+        return validCoords
+    }
 
     function getMatrix(arr) {
         const matrix
@@ -145,12 +214,13 @@ document.addEventListener("DOMContentLoaded", () => {
         node.style.transform = `translate3D(${x * shiftPs}%, ${y * shiftPs}%,0)`
     }
 
-    function shuffleArray(arr) {
-        return arr
-            .map(value => ({value, sort: Math.random()}))
-            .sort((a, b) => a.sort - b.sort)
-            .map(({value}) => value)
-    }
+    // shuffle 1 варианта
+    // function shuffleArray(arr) {
+    //     return arr
+    //         .map(value => ({value, sort: Math.random()}))
+    //         .sort((a, b) => a.sort - b.sort)
+    //         .map(({value}) => value)
+    // }
 
     function findCoordinatesByNumber(number, matrix) {
         for (let y = 0; y < matrix.length; y++) {
@@ -181,7 +251,8 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    const winFlatArr = new Array(16).fill(0).map((_,i)=> i + 1)
+    const winFlatArr = new Array(16).fill(0).map((_, i) => i + 1)
+
     function isWon(matrix) {
         const flatMatrix = matrix.flat()
         for (let i = 0; i < winFlatArr.length; i++) {
@@ -194,14 +265,15 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     const wonClass = 'fifteenWon'
+
     function addWonClass() {
-        setTimeout(()=>{
+        setTimeout(() => {
             containerNode.classList.add(wonClass)
 
-            setTimeout(()=>{
+            setTimeout(() => {
                 containerNode.classList.remove(wonClass)
-            },1000)
-        },200)
+            }, 1000)
+        }, 200)
     }
 });
 

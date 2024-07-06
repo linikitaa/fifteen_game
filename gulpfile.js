@@ -32,7 +32,8 @@ function browsersync() {
     browserSync.init({
         server: {
             baseDir: 'app/'
-        }
+        },
+        port: 8000
     })
 }
 
